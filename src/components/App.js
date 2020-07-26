@@ -26,26 +26,28 @@ class App extends React.Component {
   }
 
   onFindPetsClick = () => {
-    let endpoint = '/api/pets'
-
-    if (this.state.filters.type !== 'all') {
-      endpoint += `?type=${this.state.filters.type}`
+    if (this.state.filters.type !== "all") {
+      return fetch(`/api/pets?type=${this.state.filters.type}`)
+        .then(resp => resp.json())
+        .then(pets => this.setState({ pets }))
+    } else {
+      return fetch("/api/pets")
+        .then(resp => resp.json())
+        .then(pets => this.setState({ pets }))
     }
-
-    fetch(endpoint)
-      .then(response => response.json())
-      .then(pets => {
-        this.setState({ pets })
-      })
   }
 
   onAdoptPet = id => {
-    const pets = this.state.pets.map(pet => {
-      return pet.id === id ? {
-        ...pet,
-        isAdopted: true
-      } : pet
-    })
+    // const pets = this.state.pets.map(pet => {
+    //   return pet.id === id ? {
+    //     ...pet,
+    //     isAdopted: true
+    //   } : pet
+    // })
+    // this.setState({ pets })
+    const pets = [...this.state.pets]
+    const index = pets.findIndex(pet => pet.id === id)
+    pets[index].isAdopted = true;
     this.setState({ pets })
   }
 
